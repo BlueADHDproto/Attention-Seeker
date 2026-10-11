@@ -1,0 +1,46 @@
+// C++ code
+//
+#include <Adafruit_LiquidCrystal.h>
+
+Adafruit_LiquidCrystal lcd_1(0);
+int attentionLevel = 24;
+
+int timeDelay = ((100 - (attentionLevel))*10);
+
+void setup()
+{
+  pinMode(4, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(2, INPUT_PULLUP);
+  attentionLevel = 24;
+  lcd_1.begin(16, 2);
+  lcd_1.setBacklight(1);
+  lcd_1.noCursor();
+  lcd_1.setCursor(0, 0);
+}
+
+void loop()
+{
+  delay(2000); // Wait for 2000 millisecond(s) 
+  if (digitalRead(2) == LOW) {
+    attentionLevel += (100-attentionLevel);
+  } else if (digitalRead(2) == HIGH) {
+    	attentionLevel -= 0.10;
+  	if (attentionLevel > 100 || attentionLevel < 0) {
+		attentionLevel += (100-attentionLevel);  	}
+int timeDelay = ((100 - (attentionLevel))*10);
+  }
+  lcd_1.clear();
+  lcd_1.setCursor(0, 0);lcd_1.setCursor(0, 0);
+  lcd_1.print("Attention: ");
+  lcd_1.print(attentionLevel);
+  lcd_1.print('%');
+  if (attentionLevel < 25) {
+    analogWrite(3, 255);
+    digitalWrite(4, HIGH);
+    delay(timeDelay); // Wait for delayBeep millisecond(s)
+    analogWrite(3, 0);
+    digitalWrite(4, LOW);
+    delay(timeDelay/3); // Wait for delayBeepOff millisecond(s)
+  }
+}
